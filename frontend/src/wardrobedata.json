@@ -1,0 +1,61 @@
+{
+    "products": [
+        {
+            "name": "Drilocarius V2's",
+            "imageUrl": "./OutfitImages/DrilocariusV2.webp",
+            "price": 90.99,
+            "category": "Robes", 
+            "color": "Red"
+        },
+        {
+            "name": "Grenol's Nature Slovs",
+            "imageUrl": "./OutfitImages/GrenolsNatureSlovs.webp",
+            "price": 90.99,
+            "category": "Cloaks", 
+            "color": "Green"
+        },
+        {
+            "name": "Wintersbane Glonks",
+            "imageUrl": "./OutfitImages/WintersbaneGlonks.webp",
+            "price": 50.99,
+            "category": "Cloaks", 
+            "color": "White"
+        },
+        {
+            "name": "Keron Softpols",
+            "imageUrl": "./OutfitImages/KeronSoftPols.webp",
+            "price": 59.99,
+            "category": "Cloaks", 
+            "color": "Blue"
+        },
+        {
+            "name": "Webweaver T3's",
+            "imageUrl": "./OutfitImages/WebWeaverT3.webp",
+            "price": 249.99,
+            "category": "Cloaks", 
+            "color": "Blue"
+        },
+        {
+            "name": "ElderLine Max",
+            "imageUrl": "./OutfitImages/ElderLineMax.webp",
+            "price": 109.99,
+            "category": "Cloaks", 
+            "color": "Blue"
+        },
+        {
+            "name": "Scholars First",
+            "imageUrl": "./OutfitImages/ScholarsFirst.webp",
+            "price": 99.99,
+            "category": "Jackets", 
+            "color": "Green"
+        },
+        {
+            "name": "Jolonquis 13",
+            "imageUrl": "./OutfitImages/Jolonquis13.webp",
+            "price": 99.99,
+            "category": "Jackets", 
+            "color": "Red"
+        }
+     
+    ]
+}

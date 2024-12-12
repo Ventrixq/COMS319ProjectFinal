@@ -1,0 +1,35 @@
+.anim{
+    outline-width: 1px;
+    outline-offset: 0;
+    outline-style: solid;
+    outline-color: rgba(179, 170, 136, 0.75);
+}
+.anim:hover {
+    animation: animateOutline 1.5s ease;
+}
+
+@keyframes animateOutline {
+    0% {
+        outline-width: 1px;
+        outline-offset: 0;
+        outline-color: rgba(179, 170, 136, 0.75);
+    }
+
+    10% {
+        outline-color: rgba(179, 170, 136, 0.75);
+    }
+
+    /* The animation finishes at 50% */
+    50% {
+        outline-width: 7px;
+        outline-offset: 4px;
+        outline-color: rgba(0, 130, 206, 0);
+    }
+
+    100% {
+        outline-width: 10px;
+        outline-offset: 4px;
+        outline-color: rgba(102, 102, 102, 0);
+    }
+}
+  
