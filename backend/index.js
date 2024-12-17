@@ -393,9 +393,9 @@ app.post("/orders", async (req, res) => {
 
         const newDocument = {
             "name": req.body.name,
-            "description": req.body.descriptionn,
-            "deliveryDate": req.body.delDate,
-            "orderDate": req.body.ordDate
+            "description": req.body.description,
+            "deliveryDate": req.body.deliverDate,
+            "orderDate": req.body.orderDate
         };
         const id = Number(req.body.id);
      
