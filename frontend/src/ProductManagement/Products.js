@@ -64,15 +64,15 @@ const Products = ({ products, setProducts }, users) => {
         <div className="carousel-inner">
           <div className="carousel-item active">
             <img
-              src="https://via.placeholder.com/1920x500?text=Welcome+to+ShopEase"
+              src="https://via.placeholder.com/1920x500?text=Welcome+To+GrimStone"
               className="d-block w-100"
               alt="Welcome Banner"
             />
             <div className="carousel-caption d-none d-md-block">
-              <h1>ShopEase</h1>
+              <h1>GrimStone</h1>
               <p>Your one-stop shop for everything you need!</p>
               <a href="#" className="btn btn-primary btn-lg" onClick={handleCreateProduct}>
-                Start Shopping
+                Add Product
               </a>
             </div>
           </div>
@@ -126,14 +126,7 @@ const Products = ({ products, setProducts }, users) => {
           <span className="visually-hidden">Next</span>
         </button>
       </div>
-      {/* Hero Section */}
-      <div className="container text-center my-5">
-        <h1>Welcome to ShopEase</h1>
-        <p className="lead">Your one-stop shop for everything you need!</p>
-        <a href="#" className="btn btn-primary btn-lg">
-          Start Shopping
-        </a>
-      </div>
+
       {/* Product Grid */}
       <div className="container">
         <ProductGrid products={products}/>
@@ -141,7 +134,7 @@ const Products = ({ products, setProducts }, users) => {
       {/* Footer */}
       <footer className="bg-light text-center text-lg-start mt-5">
         <div className="container p-4">
-          <p>&copy; 2024 ShopEase. All rights reserved.</p>
+          <p>&copy; 2024 GrimStone. All rights reserved.</p>
         </div>
       </footer>
     </>    
