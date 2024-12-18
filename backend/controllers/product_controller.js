@@ -1,21 +1,15 @@
-var product = function product(app, client, db){
-        // ---------------GET LIST Setup ------------//
-    app.get("/listProducts", async (req, res) => {    // Changes to app.get("/listProducts")
-        // In the Body of the callback function 
-        await client.connect();     
-        console.log("Node connected successfully to GET MongoDB");  
-        console.log(db.databaseName)
-        const query = {};            
-        const results = await db  
-        .collection("product") 
-        .find(query)
-        .limit(100)
-        .toArray();
+var Product = require ("../models/product.js");
 
-        console.log(results);
-        res.status(200);
-        res.send(results);
-
+var product = function product(app, mongoose) {
+    // ---------------GET LIST Setup ------------//
+    app.get("/listProducts", async (req, res) => {
+        try {
+            const product = await Product.find({}).limit(100); // Mongoose query to find all products
+            res.status(200).send(product);
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            res.status(500).send({ error: 'Internal Server Error' });
+        }
     });
     // ---------------GET LIST Setup ------------//
 
@@ -24,132 +18,87 @@ var product = function product(app, client, db){
         const id = req.params.id;
         console.log("Product to find :", id);
 
-        await client.connect();
-        console.log("Node connected successfully to GET-id MongoDB");
-        const query = {id : Number(id)};
-
-        console.log(query)
-        const results = await db.collection("product")
-            .findOne(query);
-        console.log(dbName)
-        //console.log(results.collection)
-        console.log("Results :", results);
-        if (!results)
-            res.send("Not Found").status(404);
-        else
-            res.send(results).status(200);
+        try {
+            const product = await Product.findOne({ productId: id }); // Using Mongoose to find the product by ID
+            if (!product) {
+                return res.status(404).send("Not Found");
+            }
+            res.status(200).send(product);
+        } catch (error) {
+            console.error("Error fetching product:", error);
+            res.status(500).send({ error: 'Internal Server Error' });
+        }
     });
     // ---------------GET Setup ------------//
 
     // ---------------POST Setup ------------//
     app.post("/product", async (req, res) => {
-        await client.connect();
         try {
-            console.log(req.body)
-            console.log("Node connected successfully to POST-id MongoDB");
+            console.log(req.body);
+            const newProduct = new Product({
+                imageURL: req.body.imageURL,
+                name: req.body.name,
+                price: req.body.price,
+                description: req.body.description,
+            });
 
-            const newDocument = {
-                //"id": req.body.id,
-                "name": req.body.name,
-                "price": req.body.price,
-                "description": req.body.description,
-                "imageUrl": req.body.imageUrl,
-                "userID" : req.body.userID
-            };
-            const id = Number(req.body.id);
-        
-            // Check if the body exists
+            //Check if the body exists
             if (!req.body || Object.keys(req.body).length === 0) {
                 return res.status(400).send({ error: 'Bad request: No data provided.' });
             }
 
-            // Check if it already exists
-            const existingDoc = await db
-                .collection("product")
-                .findOne({ id: Number(newDocument.id)});
-
-            if (existingDoc) {
-                return res
-                    .status(409)
-                    .send({ error: "Conflict: A robot with this ID already exists."});
-            }
-            console.log(newDocument);
-            
-            const results = await db.collection("product").insertOne(newDocument);
-            // Send Robot Added To Server
-            const query = { id: id};
-            const productAdded = await db.collection("product").findOne(query);
-            res.status(200);
-            res.send(productAdded);
-
+            // Save the new product to the database
+            const savedProduct = await newProduct.save(); // Mongoose save operation
+            res.status(200).send(savedProduct);
         } catch (error) {
-            console.error("An error occurred: ", error);
-            res.status(500).send({error: 'An internal server error occurred'});
-
+            console.error("An error occurred:", error);
+            res.status(500).send({ error: 'Internal Server Error' });
         }
-
     });
 
     // ---------------POST Setup ------------//
 
-    app.delete("/product/:id", async (req, res) => {
-        // Read Parameter id
-        console.log(req.params)
-        const id = Number(req.params.id);
-        console.log("Product to delete :", id);
-
-        // Connect to MongoDB
-        await client.connect();
+    // ---------------DELETE Setup ------------//
+    app.delete("/product/:productId", async (req, res) => {
+        const id = req.params.id;
+        console.log("Product to delete:", id);
 
         try {
-            // Delete by its id
-            const query = { id: id};
-            
-            const productDeleted = await db.collection("product").findOne(query);
-            // Delete
-            const results = await db.collection("product").deleteOne(query);
-            // Response to Client
-            res.status(200);
-            res.send(productDeleted);
-            console.log(results)
-        }
-        catch (error){
+            const productDeleted = await Product.findByIdAndDelete(id); // Mongoose delete operation
+            if (!productDeleted) {
+                return res.status(404).send("Not Found");
+            }
+            res.status(200).send(productDeleted);
+        } catch (error) {
             console.error("Error deleting product:", error);
-            res.status(500).send({ message: 'Internal Server Error'});
-        }
-    })
-
-    app.put("/product/:id", async (req, res) => {
-        const id = Number(req.params.id); // Read parameter id
-        console.log("Product to Update :",id);
-        await client.connect(); // Connect Mongodb
-        try {
-            const query = { id: id }; // Update by its id
-    
-            console.log(req.body);
-            const updateData = {
-                $set:{
-                "name": req.body.name,
-                "price": req.body.price,
-                "description": req.body.description,
-                "imageUrl": req.body.imageUrl,
-                "userID" : req.body.userID
-                }
-            };
-
-            const options = { };
-            const results = await db.collection("product").updateOne(query, updateData, options);
-            
-            // Send the client information
-            const productUpdated = await db.collection("product").findOne(query);
-            res.status(200); // Response to Client
-            res.send(productUpdated);
-        } catch {
-            console.error("Error Updating product", error);
-            res.status(500).send({ message: 'Internal Server Error'});
+            res.status(500).send({ message: 'Internal Server Error' });
         }
     });
-    
-};
+    // ---------------DELETE Setup ------------//
 
-module.exports = product
+    // ---------------PUT Setup ------------//
+    app.put("/product/:productId", async (req, res) => {
+        const id = req.params.productId;
+        console.log("Product to Update:", id);
+        console.log("Update Body", req.body)
+        try {
+            const updateData = {
+                imageURL: req.body.imageURL,
+                name: req.body.name,
+                price: req.body.price,
+                description: req.body.description,
+            };
+
+            const updatedProduct = await Product.findOneAndUpdate({productId: id}, updateData, { new: true }); // Mongoose update operation
+            if (!updatedProduct) {
+                return res.status(404).send("Not Found");
+            }
+            res.status(200).send(updatedProduct);
+        } catch (error) {
+            console.error("Error updating product:", error);
+            res.status(500).send({ message: 'Internal Server Error' });
+        }
+    });
+    // ---------------PUT Setup ------------//
+};
+module.exports = product;

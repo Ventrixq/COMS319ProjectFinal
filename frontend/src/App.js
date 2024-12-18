@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Sidebar from "./SideBar.js";
-import Products from "./Products.js";
+import Dashboard from "./Dashboard.js";
+import Products from "./ProductManagement/Products.js";
 import Orders from "./Orders.js";
 import Users from "./Users.js";
 
@@ -20,7 +21,7 @@ function App() {
           <h1 className="text-center">GrimStone</h1>
           <Routes>
             <Route path="/" element={
-                <mainDashboard users = {users} setUsers={setUsers} />
+                <Dashboard users = {users} setUsers={setUsers} />
             } />
             <Route path="/Products" element={
                 <Products products = {products} setProducts={setProducts} />
