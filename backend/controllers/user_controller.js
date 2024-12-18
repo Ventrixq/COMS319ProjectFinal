@@ -1,6 +1,6 @@
 const User = require('../models/user');
 
-var user = function user(app, client, db){
+var user = function user(app, upload){
      // ----------------------------------USERS ----------------------------------- //
 
     // ---------------GET LIST Setup ------------//
@@ -32,16 +32,17 @@ var user = function user(app, client, db){
     // ---------------GET Setup ------------//
 
     // ---------------POST Setup ------------//
-    app.post("/users", async (req, res) => {
+    app.post("/users/signup", upload.single("imageURL"), async (req, res) => {
         try {
-            const { name, password, imageUrl, cart } = req.body;
+            const { name, password } = req.body;
+            const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
             // Validate input
-            if (!name || !password || !imageUrl || !cart) {
+            if (!name || !password || !imageUrl) {
                 return res.status(400).send({ error: "Bad Request: Missing required fields" });
             }
 
-            const userCart = cart || [];
+            const userCart = [];
 
             // Create and save the new user
             const newUser = new User({ name, password, imageURL: imageUrl, cart: userCart });

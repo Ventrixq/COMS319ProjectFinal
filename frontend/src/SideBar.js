@@ -9,6 +9,11 @@ const Sidebar = () => {
     >
       <h2 className="text-center">Navigation</h2>
       <ul className="nav flex-column">
+      <li className="nav-item">
+          <Link to="/SignUp" className="nav-link text-dark">
+            SignUp
+          </Link>
+        </li>
         <li className="nav-item">
           <Link to="/" className="nav-link text-dark">
             Home

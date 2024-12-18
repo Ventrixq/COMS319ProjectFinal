@@ -4,8 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Sidebar from "./SideBar.js";
 import Dashboard from "./Dashboard.js";
 import Products from "./ProductManagement/Products.js";
-import Orders from "./Orders.js";
-import Users from "./Users.js";
+import Orders from "./OrderManagement/Orders.js";
+import SignUp from "./UserManagement/UserSignUp.js";
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -20,6 +20,7 @@ function App() {
         <div className="flex-grow-1 p-3">
           <h1 className="text-center">GrimStone</h1>
           <Routes>
+            <Route path="/SignUp" element={<SignUp />} />
             <Route path="/" element={
                 <Dashboard users = {users} setUsers={setUsers} />
             } />
@@ -28,9 +29,6 @@ function App() {
             }/>
             <Route path="/Orders" element={
                 <Orders orders = {orders} setOrders={setOrders} />
-            }/>
-            <Route path="/Users" element={
-                <Users users = {users} setUsers={setUsers} />
             }/>
           </Routes>
         </div>

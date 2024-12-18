@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+var multer = require('multer');
 var express = require("express");
 var cors = require("cors");
 var fs = require("fs");
@@ -39,8 +40,27 @@ mongoose.connect(url,
   .then(() => console.log(`MongoDB connected to MongoDB - ${mongoose.connection.db.databaseName}`))
   .catch(err => console.log('Error connecting to MongoDB:', err));
 
+
+// ---------------Image Handling Setup------------//
+// Set up multer for image upload
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');  // Set uploads directory
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname);  // Make filenames unique with timestamp
+    }
+});
+
+const upload = multer({ storage: storage });
+
+// Create "uploads" folder if it doesn't exist
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads");
+}
+
 // ---------------Connection Setup ------------//
 order(app, mongoose)
 product_control(app, mongoose)
-user(app, mongoose)
+user(app, upload)
 
