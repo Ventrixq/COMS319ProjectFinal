@@ -29,9 +29,9 @@ const Products = ({ products, setProducts }, users) => {
             key={product.id}
             className="list-group-item d-flex align-items-center"
           >
-            {product.image_url && (
+            {product.imageUrl && (
               <img
-                src={`http://localhost:8081${product.imageUrl}`}
+                src={`${product.imageUrl}`}
                 alt={product.name}
                 style={{
                   width: "50px",
