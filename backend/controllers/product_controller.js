@@ -14,7 +14,7 @@ var product = function product(app, mongoose) {
     // ---------------GET LIST Setup ------------//
 
     // ---------------GET Setup ------------//
-    app.get("/product/:id", async (req, res) => {
+    app.get("/product/:productId", async (req, res) => {
         const id = req.params.id;
         console.log("Product to find :", id);
 

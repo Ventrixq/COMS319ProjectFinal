@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import UpdateProductButton from './UpdateProductButton';
-
+import UpdateProductButton from './UpdateProduct';
+import ProductGrid from "./ProductGrid";
 
 const Products = ({ products, setProducts }, users) => {
   //recieve hook
@@ -136,24 +136,7 @@ const Products = ({ products, setProducts }, users) => {
       </div>
       {/* Product Grid */}
       <div className="container">
-        <div className="row">
-          {products.map((product) => (
-            <div className="col-md-4 mb-4">
-              <div className="card h-100">
-                <img
-                  src={`${product.imageUrl}`}
-                  className="card-img-top"
-                  alt={`${product.name}`}
-                />
-                <div className="card-body">
-                  <h5 className="card-title"></h5>
-                  <p className="card-text">${product.price}</p>
-                  <button className="btn btn-primary">Add to Cart</button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ProductGrid products={products}/>
       </div>
       {/* Footer */}
       <footer className="bg-light text-center text-lg-start mt-5">

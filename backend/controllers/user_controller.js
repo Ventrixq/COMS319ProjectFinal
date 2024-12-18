@@ -1,153 +1,135 @@
+const User = require('../models/user');
+
 var user = function user(app, client, db){
-    // ----------------------------------USERS ----------------------------------- //
+     // ----------------------------------USERS ----------------------------------- //
+
     // ---------------GET LIST Setup ------------//
-    app.get("/listUsers", async (req, res) => {    
-        // In the Body of the callback function 
-        await client.connect();     
-        console.log("Node connected successfully to GET MongoDB");  
-        console.log(db.databaseName)
-        const query = {};            
-        const results = await db  
-        .collection("users") 
-        .find(query)
-        .limit(100)
-        .toArray();
-
-        console.log(results);
-        res.status(200);
-        res.send(results);
-
+    app.get("/listUsers", async (req, res) => {
+        try {
+            const users = await User.find().limit(100);
+            res.status(200).send(users);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            res.status(500).send({ message: "Internal Server Error" });
+        }
     });
     // ---------------GET LIST Setup ------------//
 
     // ---------------GET Setup ------------//
     app.get("/users/:id", async (req, res) => {
-        const id = req.params.id;
-        console.log("user to find :", id);
-
-        await client.connect();
-        console.log("Node connected successfully to GET-id MongoDB");
-        const query = {id : Number(id)};
-
-        console.log(query)
-        const results = await db.collection("users")
-            .findOne(query);
-        console.log(dbName)
-        //console.log(results.collection)
-        console.log("Results :", results);
-        if (!results)
-            res.send("Not Found").status(404);
-        else
-            res.send(results).status(200);
+        const id = Number(req.params.id);
+        try {
+            const user = await User.findOne({ userId: id });
+            if (!user) {
+                return res.status(404).send("User Not Found");
+            }
+            res.status(200).send(user);
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            res.status(500).send({ message: "Internal Server Error" });
+        }
     });
     // ---------------GET Setup ------------//
 
     // ---------------POST Setup ------------//
     app.post("/users", async (req, res) => {
-        await client.connect();
         try {
-            console.log(req.body)
-            console.log("Node connected successfully to POST-id MongoDB");
+            const { name, password, imageUrl, cart } = req.body;
 
-            const newDocument = {
-                "name": req.body.name,
-                "password": req.body.password,
-                "imageUrl": req.body.imageUrl,
-                "cart": req.body.cart
-            };
-            const id = Number(req.body.id);
-        
-            // Check if the body exists
-            if (!req.body || Object.keys(req.body).length === 0) {
-                return res.status(400).send({ error: 'Bad request: No data provided.' });
+            // Validate input
+            if (!name || !password || !imageUrl || !cart) {
+                return res.status(400).send({ error: "Bad Request: Missing required fields" });
             }
 
-            // Check if it already exists
-            const existingDoc = await db
-                .collection("users")
-                .findOne({ id: Number(newDocument.id)});
+            const userCart = cart || [];
 
-            if (existingDoc) {
-                return res
-                    .status(409)
-                    .send({ error: "Conflict: A user with this ID already exists."});
-            }
-            console.log(newDocument);
-            
-            const results = await db.collection("users").insertOne(newDocument);
-            // Send Robot Added To Server
-            const query = { id: id};
-            const userAdded = await db.collection("users").findOne(query);
-            res.status(200);
-            res.send(productAdded);
+            // Create and save the new user
+            const newUser = new User({ name, password, imageURL: imageUrl, cart: userCart });
+            const savedUser = await newUser.save();
+            res.status(201).send(savedUser);
 
         } catch (error) {
-            console.error("An error occurred: ", error);
-            res.status(500).send({error: 'An internal server error occurred'});
-
+            console.error("Error creating user:", error);
+            if (error.code === 11000) {
+                res.status(409).send({ error: "Conflict: User ID already exists" });
+            } else {
+                res.status(500).send({ message: "Internal Server Error" });
+            }
         }
-
     });
-
     // ---------------POST Setup ------------//
 
+    // ---------------DELETE Setup ------------//
     app.delete("/users/:id", async (req, res) => {
-        // Read Parameter id
-        console.log(req.params)
         const id = Number(req.params.id);
-        console.log("User to delete :", id);
-
-        // Connect to MongoDB
-        await client.connect();
-
         try {
-            // Delete by its id
-            const query = { id: id};
-            
-            // Before We Delete The Robot - Send Client the information
-            const userDeleted = await db.collection("users").findOne(query);
-            // Delete
-            const results = await db.collection("users").deleteOne(query);
-            // Response to Client
-            res.status(200);
-            res.send(userDeleted);
-            console.log(results)
-        }
-        catch (error){
+            const deletedUser = await User.findOneAndDelete({ userId: id });
+            if (!deletedUser) {
+                return res.status(404).send("User Not Found");
+            }
+            res.status(200).send(deletedUser);
+        } catch (error) {
             console.error("Error deleting user:", error);
-            res.status(500).send({ message: 'Internal Server Error'});
-        }
-    })
-
-    app.put("/users/:id", async (req, res) => {
-        const id = Number(req.params.id); // Read parameter id
-        console.log("User to Update :",id);
-        await client.connect(); // Connect Mongodb
-        try {
-            const query = { id: id }; // Update by its id
-            // Data for updating the document, typically comes from the request body
-            console.log(req.body);
-            const updateData = {
-                $set:{
-                "name": req.body.name,
-                "password": req.body.password,
-                "imageUrl": req.body.imageUrl
-                }
-            };
-
-            // Add options if needed, for example { upsert: true } to create a document if it doesn't exist
-            const options = { };
-            const results = await db.collection("users").updateOne(query, updateData, options);
-            
-            // Send the client information
-            const userUpdated = await db.collection("users").findOne(query);
-            res.status(200); // Response to Client
-            res.send(productUpdated);
-        } catch {
-            console.error("Error Updating product", error);
-            res.status(500).send({ message: 'Internal Server Error'});
+            res.status(500).send({ message: "Internal Server Error" });
         }
     });
+    // ---------------DELETE Setup ------------//
+
+    // ---------------PUT Setup ------------//
+    app.put("/users/:id", async (req, res) => {
+        const id = Number(req.params.id);
+        const { name, password, imageUrl, cart } = req.body;
+        try {
+            const updatedUser = await User.findOneAndUpdate(
+                { userId: id },
+                { name, password, imageURL: imageUrl, cart },
+                { new: true }
+            );
+            if (!updatedUser) {
+                return res.status(404).send("User Not Found");
+            }
+            res.status(200).send(updatedUser);
+        } catch (error) {
+            console.error("Error updating user:", error);
+            res.status(500).send({ message: "Internal Server Error" });
+        }
+    });
+    // ---------------PUT Setup ------------//
+
+    app.put("/users/:userId/cart", async (req, res) => {
+        const { userId } = req.params;  // Read the userId from the URL parameters
+        const { productId } = req.body; // Read the productId from the request body
+    
+        if (!productId) {
+            return res.status(400).send({ error: "Bad Request: Missing productId" });
+        }
+    
+        try {
+            // Find the user by userId
+            const user = await User.findOne({ userId });
+    
+            if (!user) {
+                return res.status(404).send({ error: "User not found" });
+            }
+    
+            // Check if the product is already in the user's cart
+            if (user.cart.includes(productId)) {
+                return res.status(400).send({ error: "Product is already in the cart" });
+            }
+    
+            // Add the productId to the cart
+            user.cart.push(productId);
+    
+            // Save the updated user
+            const updatedUser = await user.save();
+    
+            res.status(200).send(updatedUser); // Respond with the updated user
+        } catch (error) {
+            console.error("Error updating cart:", error);
+            res.status(500).send({ message: "Internal Server Error" });
+        }
+    });
+    
 };
 
 module.exports = user
