@@ -45,9 +45,18 @@ var user = function user(app, upload){
             const userCart = [];
 
             // Create and save the new user
-            const newUser = new User({ name, password, imageURL: imageUrl, cart: userCart });
-            const savedUser = await newUser.save();
-            res.status(201).send(savedUser);
+            if (password == "Admin"){
+                const newUser = new User({ name, password, imageURL: imageUrl, cart: userCart, admin: true});
+                const savedUser = await newUser.save();
+                res.send(savedUser.userId);
+                //res.status(201).send(savedUser);
+            }
+            else {
+                const newUser = new User({ name, password, imageURL: imageUrl, cart: userCart, admin: false});
+                const savedUser = await newUser.save();
+                res.send(savedUser.userId);
+                //res.status(201).send(savedUser);
+            }
 
         } catch (error) {
             console.error("Error creating user:", error);

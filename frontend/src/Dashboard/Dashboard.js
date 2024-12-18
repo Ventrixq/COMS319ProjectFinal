@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./styles/main/blog.css";
-import "./styles/main/carousel.css";
+import "../styles/main/blog.css";
+import "../styles/main/carousel.css";
 
 const Dashboard = ({user, setUsers}) => {
     //recieve hook

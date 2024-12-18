@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import App from "../App.js"
 
-const SignUp = () => {
+const SignUp = ({logged, setLogged, admin, setAdmin, userId, setUserId}) => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate();
-
+  const navigate = useNavigate(); 
+ 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     setImage(file);  // Set the image file state
@@ -34,10 +35,15 @@ const SignUp = () => {
         method: 'POST',
         body: formData,
       });
-
+      if (password === "Admin"){
+        setAdmin(true);
+      }
       if (response.ok) {
         // Successfully signed up
-        navigate('/');  // Redirect to the login page
+        const userId = await response.text();
+        console.log(userId);
+        setUserId = userId;
+        navigate('/Main');
       } else {
         setErrorMessage('Error during sign-up');
         console.log(formData.entries.name)

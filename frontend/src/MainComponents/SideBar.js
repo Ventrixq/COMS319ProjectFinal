@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Sidebar = () => {
+const Sidebar = ({admin}) => {
   return (
     <div
       className="d-flex flex-column vh-100 p-3 bg-light"
@@ -9,13 +9,8 @@ const Sidebar = () => {
     >
       <h2 className="text-center">Navigation</h2>
       <ul className="nav flex-column">
-      <li className="nav-item">
-          <Link to="/SignUp" className="nav-link text-dark">
-            SignUp
-          </Link>
-        </li>
         <li className="nav-item">
-          <Link to="/" className="nav-link text-dark">
+          <Link to="/Main" className="nav-link text-dark">
             Home
           </Link>
         </li>
@@ -30,15 +25,14 @@ const Sidebar = () => {
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/Users" className="nav-link text-dark">
-            View All Users
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/Orders" className="nav-link text-dark">
+          <Link to="/Carts" className="nav-link text-dark">
             Cart
           </Link>
         </li>
+        {admin === true && (
+          <>
+          </>
+        )}
       </ul>
     </div>
   );
